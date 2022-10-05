@@ -2,7 +2,6 @@
 import dynamic from 'next/dynamic';
 import { NextSeo } from 'next-seo';
 import { memo } from 'react';
-
 const Home = dynamic(() => import('containers/Home'));
 
 function PublicContainer() {

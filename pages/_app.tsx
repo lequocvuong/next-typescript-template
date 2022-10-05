@@ -6,22 +6,37 @@ import Head from 'next/head';
 import { ResponsiveGlobal } from '@styles/responsive';
 import React from 'react';
 import { NextComponentType } from 'next';
-
 import NextProgress from 'next-progress';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import createEmotionCache from '../utility/createEmotionCache';
+import lightThemeOptions from '../styles/theme/lightThemeOptions';
 import { wrapper } from '../store';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { AuthProvider } from '../contexts/auth'
 
 interface AppProps {
   Component: NextComponentType<any>;
   pageProps: any;
+  emotionCache?: EmotionCache;
 }
+
+const clientSideEmotionCache = createEmotionCache();
+
+const lightTheme = createTheme(lightThemeOptions);
+
 
 const MyApp: React.FunctionComponent<AppProps> = ({
   Component,
+  emotionCache = clientSideEmotionCache,
   pageProps,
 }: AppProps) => {
   const router = useRouter();
+  
   return (
     <>
       <Head>
@@ -47,9 +62,16 @@ const MyApp: React.FunctionComponent<AppProps> = ({
         height="4px"
         options={{ showSpinner: true }}
       />
-      <Component {...pageProps} />
-      <GlobalStyle />
-      <ResponsiveGlobal />
+      <AuthProvider>
+        <CacheProvider value={emotionCache}>
+          <ThemeProvider theme={lightTheme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+            <GlobalStyle />
+            <ResponsiveGlobal />
+          </ThemeProvider>
+        </CacheProvider>
+      </AuthProvider>
     </>
   );
 };
